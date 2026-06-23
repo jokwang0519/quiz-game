@@ -81,7 +81,7 @@ export default function TeacherPage() {
   useEffect(() => {
     if (step !== "session") return;
     fetchSession();
-    const t = setInterval(fetchSession, 2000);
+    const t = setInterval(fetchSession, 500);
     return () => clearInterval(t);
   }, [step, fetchSession]);
 

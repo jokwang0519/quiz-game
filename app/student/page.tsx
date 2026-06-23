@@ -78,7 +78,7 @@ export default function StudentPage() {
     if (step === "profile" || step === "join") return;
     if (step === "done") return; // 완료 후 더 이상 폴링 불필요
     fetchSession();
-    const t = setInterval(fetchSession, 2000);
+    const t = setInterval(fetchSession, 500);
     return () => clearInterval(t);
   }, [step, fetchSession]);
 
@@ -120,7 +120,7 @@ export default function StudentPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "position", code, name, position }),
       }).catch(() => {});
-    }, 200);
+    }, 50);
   };
 
   // 답 확정 → 서버 전송 → 정답/오답 피드백
