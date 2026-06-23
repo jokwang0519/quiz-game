@@ -565,7 +565,7 @@ export default function StudentPage() {
             const MAX_SHOW = 10;
             const shown = choosersOfThis.slice(0, MAX_SHOW);
             const overflow = choosersOfThis.length - MAX_SHOW;
-            const avatarSize = "clamp(24px,2.4vw,36px)";
+            const avatarSize = "clamp(36px,3.6vw,52px)";
 
             return (
               <button
