@@ -576,31 +576,35 @@ export default function StudentPage() {
                 className={`${isChosen ? "wiggle" : isActive ? "pill-active" : ""} ${slideClass}`}
                 style={{
                   width: "100%", height: "100%",
-                  background: isActive && !isChosen
-                    ? `linear-gradient(135deg, ${cfg.color}ee, ${cfg.color}bb)`
-                    : pillBg,
-                  border: pillBorder,
+                  background: isWrongPill ? "#ef4444"
+                    : isCorrectPill ? "#22c55e"
+                    : isChosen ? cfg.color
+                    : isActive ? cfg.color
+                    : "rgba(255,252,240,0.97)",
+                  border: isWrongPill ? "5px solid #b91c1c"
+                    : isCorrectPill ? "5px solid #15803d"
+                    : isActive || isChosen ? `5px solid white`
+                    : `3px solid ${cfg.color}88`,
                   borderRadius: "999px",
                   cursor: chosen !== null ? "default" : "pointer",
                   display: "flex", alignItems: "stretch",
                   zIndex: isActive ? 30 : 20,
-                  transition: "transform 0.15s, background 0.18s, border 0.15s",
+                  transition: "transform 0.12s, background 0.12s, border 0.12s",
                   transform: isChosen ? "scale(1.06) translateY(-5px)"
-                    : isActive ? "scale(1.07) translateY(-4px)" : "scale(1)",
+                    : isActive ? "scale(1.10) translateY(-6px)" : "scale(1)",
                   boxShadow: isActive && !isChosen
-                    ? `0 8px 0 ${cfg.border}, 0 12px 32px rgba(0,0,0,0.35)`
+                    ? `0 0 0 4px white, 0 10px 40px rgba(0,0,0,0.5)`
+                    : isChosen ? `0 8px 0 ${cfg.border}, 0 12px 28px rgba(0,0,0,0.32)`
                     : pillShadow,
                   overflow: "hidden",
-                  opacity: showFeedback && !isChosen && !isCorrectPill ? 0.45 : 1,
-                  outline: isActive && !isChosen ? `4px solid white` : "none",
-                  outlineOffset: "2px",
+                  opacity: showFeedback && !isChosen && !isCorrectPill ? 0.35 : 1,
                 }}
               >
                 {/* 왼쪽 컬러 블록: 배지 영역 */}
                 <div style={{
                   width: "22%", minWidth: 0,
-                  background: isChosen || isWrongPill || isCorrectPill
-                    ? "rgba(0,0,0,0.18)"
+                  background: isChosen || isWrongPill || isCorrectPill || isActive
+                    ? "rgba(0,0,0,0.22)"
                     : cfg.color,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   flexShrink: 0,
@@ -634,8 +638,8 @@ export default function StudentPage() {
                   alignItems: "flex-end", justifyContent: "center",
                   padding: "4% 4% 4% 2%",
                   gap: "4%",
-                  background: isChosen || isWrongPill || isCorrectPill
-                    ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.04)",
+                  background: isChosen || isWrongPill || isCorrectPill || isActive
+                    ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.04)",
                   borderRadius: "0 999px 999px 0",
                 }}>
                   {chosen === null && !showFeedback && choosersOfThis.length === 0 && (
