@@ -573,7 +573,7 @@ export default function StudentPage() {
                 onClick={() => { if (chosen === null) confirmChoice(i); }}
                 onMouseEnter={() => { if (chosen === null) { setHoverIdx(i); setCursor(null); } }}
                 onMouseLeave={() => { if (chosen === null) setHoverIdx(null); }}
-                className={`${isChosen ? "wiggle" : isActive ? "pill-active" : ""} ${slideClass}`}
+                className={`${isChosen ? "wiggle" : isActive ? "pill-selecting" : ""} ${slideClass}`}
                 style={{
                   width: "100%", height: "100%",
                   background: isWrongPill ? "#ef4444"
@@ -583,24 +583,23 @@ export default function StudentPage() {
                     : "rgba(255,252,240,0.97)",
                   border: isWrongPill ? "6px solid #fff"
                     : isCorrectPill ? "6px solid #fff"
-                    : isActive ? `6px solid white`
                     : isChosen ? `6px solid white`
+                    : isActive ? `5px solid white`
                     : `3px solid ${cfg.color}88`,
                   borderRadius: "999px",
                   cursor: chosen !== null ? "default" : "pointer",
                   display: "flex", alignItems: "stretch",
                   zIndex: isActive ? 30 : 20,
-                  transition: "transform 0.1s, background 0.1s, border 0.1s, opacity 0.1s",
-                  transform: isChosen ? "scale(1.07) translateY(-6px)"
-                    : isActive ? "scale(1.13) translateY(-8px)" : "scale(1)",
+                  transition: isActive ? "none" : "transform 0.15s, background 0.15s, opacity 0.15s",
+                  transform: isChosen ? "scale(1.07) translateY(-6px)" : "scale(1)",
                   boxShadow: isActive && !isChosen
-                    ? `0 0 0 5px ${cfg.color}, 0 0 0 8px white, 0 16px 48px rgba(0,0,0,0.55)`
+                    ? `0 0 0 6px ${cfg.color}, 0 0 0 10px white, 0 20px 50px rgba(0,0,0,0.6)`
                     : isChosen ? `0 0 0 4px ${cfg.border}, 0 12px 28px rgba(0,0,0,0.32)`
                     : pillShadow,
                   overflow: "visible",
                   position: "relative",
                   opacity: showFeedback && !isChosen && !isCorrectPill ? 0.25
-                    : !isActive && !isChosen && !showFeedback && chosen === null && (hoverIdx !== null || cursor !== null) ? 0.55
+                    : !isActive && !isChosen && !showFeedback && chosen === null && (hoverIdx !== null || cursor !== null) ? 0.5
                     : 1,
                 }}
               >

@@ -138,3 +138,15 @@ input::placeholder, textarea::placeholder {
   50% { box-shadow: 0 0 0 6px rgba(255,255,255,1), 0 0 36px 10px rgba(255,255,255,0.6); }
 }
 .pill-active { animation: pill-active-glow 0.8s ease-in-out infinite; }
+
+@keyframes pill-flash {
+  0%   { outline-color: white; outline-width: 5px; transform: scale(1.13) translateY(-8px); }
+  40%  { outline-color: yellow; outline-width: 8px; transform: scale(1.16) translateY(-10px); }
+  100% { outline-color: white; outline-width: 5px; transform: scale(1.13) translateY(-8px); }
+}
+.pill-selecting {
+  animation: pill-flash 0.5s ease-in-out infinite;
+  outline: 5px solid white;
+  outline-offset: 3px;
+  z-index: 30 !important;
+}
