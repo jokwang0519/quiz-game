@@ -596,30 +596,13 @@ export default function StudentPage() {
                     ? `0 0 0 6px ${cfg.color}, 0 0 0 10px white, 0 20px 50px rgba(0,0,0,0.6)`
                     : isChosen ? `0 0 0 4px ${cfg.border}, 0 12px 28px rgba(0,0,0,0.32)`
                     : pillShadow,
-                  overflow: "visible",
+                  overflow: "hidden",
                   position: "relative",
                   opacity: showFeedback && !isChosen && !isCorrectPill ? 0.25
                     : !isActive && !isChosen && !showFeedback && chosen === null && (hoverIdx !== null || cursor !== null) ? 0.5
                     : 1,
                 }}
               >
-                {/* 안쪽 내용 클립 래퍼 - overflow hidden 효과 */}
-                <div style={{ position: "absolute", inset: 0, borderRadius: "999px", overflow: "hidden", pointerEvents: "none", zIndex: 1 }} />
-
-                {/* 선택중 뱃지 */}
-                {isActive && !isChosen && (
-                  <div style={{
-                    position: "absolute", top: -18, left: "50%",
-                    transform: "translateX(-50%)",
-                    background: "white", color: cfg.color,
-                    fontWeight: 900, fontSize: "clamp(10px,1vw,14px)",
-                    padding: "2px 12px", borderRadius: 99,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                    whiteSpace: "nowrap", zIndex: 40,
-                    animation: "bounce-in 0.2s ease both",
-                  }}>👆 선택중!</div>
-                )}
-
                 {/* 왼쪽 컬러 블록: 배지 영역 */}
                 <div style={{
                   width: "22%", minWidth: 0,
