@@ -581,25 +581,46 @@ export default function StudentPage() {
                     : isChosen ? cfg.color
                     : isActive ? cfg.color
                     : "rgba(255,252,240,0.97)",
-                  border: isWrongPill ? "5px solid #b91c1c"
-                    : isCorrectPill ? "5px solid #15803d"
-                    : isActive || isChosen ? `5px solid white`
+                  border: isWrongPill ? "6px solid #fff"
+                    : isCorrectPill ? "6px solid #fff"
+                    : isActive ? `6px solid white`
+                    : isChosen ? `6px solid white`
                     : `3px solid ${cfg.color}88`,
                   borderRadius: "999px",
                   cursor: chosen !== null ? "default" : "pointer",
                   display: "flex", alignItems: "stretch",
                   zIndex: isActive ? 30 : 20,
-                  transition: "transform 0.12s, background 0.12s, border 0.12s",
-                  transform: isChosen ? "scale(1.06) translateY(-5px)"
-                    : isActive ? "scale(1.10) translateY(-6px)" : "scale(1)",
+                  transition: "transform 0.1s, background 0.1s, border 0.1s, opacity 0.1s",
+                  transform: isChosen ? "scale(1.07) translateY(-6px)"
+                    : isActive ? "scale(1.13) translateY(-8px)" : "scale(1)",
                   boxShadow: isActive && !isChosen
-                    ? `0 0 0 4px white, 0 10px 40px rgba(0,0,0,0.5)`
-                    : isChosen ? `0 8px 0 ${cfg.border}, 0 12px 28px rgba(0,0,0,0.32)`
+                    ? `0 0 0 5px ${cfg.color}, 0 0 0 8px white, 0 16px 48px rgba(0,0,0,0.55)`
+                    : isChosen ? `0 0 0 4px ${cfg.border}, 0 12px 28px rgba(0,0,0,0.32)`
                     : pillShadow,
-                  overflow: "hidden",
-                  opacity: showFeedback && !isChosen && !isCorrectPill ? 0.35 : 1,
+                  overflow: "visible",
+                  position: "relative",
+                  opacity: showFeedback && !isChosen && !isCorrectPill ? 0.25
+                    : !isActive && !isChosen && !showFeedback && chosen === null && (hoverIdx !== null || cursor !== null) ? 0.55
+                    : 1,
                 }}
               >
+                {/* 안쪽 내용 클립 래퍼 - overflow hidden 효과 */}
+                <div style={{ position: "absolute", inset: 0, borderRadius: "999px", overflow: "hidden", pointerEvents: "none", zIndex: 1 }} />
+
+                {/* 선택중 뱃지 */}
+                {isActive && !isChosen && (
+                  <div style={{
+                    position: "absolute", top: -18, left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "white", color: cfg.color,
+                    fontWeight: 900, fontSize: "clamp(10px,1vw,14px)",
+                    padding: "2px 12px", borderRadius: 99,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                    whiteSpace: "nowrap", zIndex: 40,
+                    animation: "bounce-in 0.2s ease both",
+                  }}>👆 선택중!</div>
+                )}
+
                 {/* 왼쪽 컬러 블록: 배지 영역 */}
                 <div style={{
                   width: "22%", minWidth: 0,
