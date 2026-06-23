@@ -573,21 +573,27 @@ export default function StudentPage() {
                 onClick={() => { if (chosen === null) confirmChoice(i); }}
                 onMouseEnter={() => { if (chosen === null) { setHoverIdx(i); setCursor(null); } }}
                 onMouseLeave={() => { if (chosen === null) setHoverIdx(null); }}
-                className={`${isChosen ? "wiggle" : ""} ${slideClass}`}
+                className={`${isChosen ? "wiggle" : isActive ? "pill-active" : ""} ${slideClass}`}
                 style={{
                   width: "100%", height: "100%",
-                  background: pillBg,
+                  background: isActive && !isChosen
+                    ? `linear-gradient(135deg, ${cfg.color}ee, ${cfg.color}bb)`
+                    : pillBg,
                   border: pillBorder,
                   borderRadius: "999px",
                   cursor: chosen !== null ? "default" : "pointer",
                   display: "flex", alignItems: "stretch",
-                  zIndex: 20,
-                  transition: "transform 0.15s, box-shadow 0.15s, background 0.18s, border 0.15s",
-                  transform: isChosen ? "scale(1.05) translateY(-4px)"
-                    : isActive ? "scale(1.03) translateY(-2px)" : "scale(1)",
-                  boxShadow: pillShadow,
+                  zIndex: isActive ? 30 : 20,
+                  transition: "transform 0.15s, background 0.18s, border 0.15s",
+                  transform: isChosen ? "scale(1.06) translateY(-5px)"
+                    : isActive ? "scale(1.07) translateY(-4px)" : "scale(1)",
+                  boxShadow: isActive && !isChosen
+                    ? `0 8px 0 ${cfg.border}, 0 12px 32px rgba(0,0,0,0.35)`
+                    : pillShadow,
                   overflow: "hidden",
                   opacity: showFeedback && !isChosen && !isCorrectPill ? 0.45 : 1,
+                  outline: isActive && !isChosen ? `4px solid white` : "none",
+                  outlineOffset: "2px",
                 }}
               >
                 {/* 왼쪽 컬러 블록: 배지 영역 */}
@@ -612,9 +618,9 @@ export default function StudentPage() {
                 }}>
                   <span style={{
                     fontSize: "clamp(15px,2vw,28px)",
-                    color: isChosen || isWrongPill || isCorrectPill ? "white" : "#1a0e00",
+                    color: isChosen || isWrongPill || isCorrectPill || isActive ? "white" : "#1a0e00",
                     fontWeight: 900,
-                    textShadow: isChosen || isWrongPill || isCorrectPill ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
+                    textShadow: isChosen || isWrongPill || isCorrectPill || isActive ? "0 1px 4px rgba(0,0,0,0.5)" : "none",
                     lineHeight: 1.2,
                     textAlign: "center",
                     wordBreak: "keep-all",

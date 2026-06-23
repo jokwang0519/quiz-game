@@ -132,3 +132,9 @@ input::placeholder, textarea::placeholder {
 .wiggle { animation: wiggle 0.5s ease; }
 .question-in { animation: question-in 0.5s ease both; }
 .chosen-pulse { animation: chosen-pulse 0.5s ease; }
+
+@keyframes pill-active-glow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255,255,255,0.7), 0 0 18px 4px rgba(255,255,255,0.35); }
+  50% { box-shadow: 0 0 0 6px rgba(255,255,255,1), 0 0 36px 10px rgba(255,255,255,0.6); }
+}
+.pill-active { animation: pill-active-glow 0.8s ease-in-out infinite; }
