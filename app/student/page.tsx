@@ -740,46 +740,31 @@ export default function StudentPage() {
 
         {/* 내 캐릭터 걷기 오버레이 */}
         {charPos && chosen === null && (
-          <div style={{
-            position: "fixed",
-            left: charPos.x,
-            top: charPos.y,
-            transform: "translate(-50%, -100%)",
-            zIndex: 100,
-            pointerEvents: "none",
-            transition: "left 0.38s cubic-bezier(.22,.68,0,1.1), top 0.38s cubic-bezier(.22,.68,0,1.1)",
-          }}>
-            {/* 걸음 그림자 */}
-            <div style={{
-              position: "absolute", bottom: -4, left: "50%", transform: "translateX(-50%)",
-              width: isWalkAnim ? 32 : 24, height: 8,
-              borderRadius: "50%",
-              background: "rgba(0,0,0,0.18)",
-              transition: "width 0.15s",
-            }} />
-            {/* 캐릭터 이미지 */}
-            <div style={{
-              transform: charFlip ? "scaleX(-1)" : "scaleX(1)",
-              animation: isWalkAnim ? "walk-bob 0.18s ease-in-out infinite" : "idle-float 2s ease-in-out infinite",
-              width: "clamp(44px,4.5vw,64px)",
-              height: "clamp(44px,4.5vw,64px)",
-            }}>
-              <img
-                src={`/characters/char_${characterId}.png`}
-                alt={name}
-                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
-                onError={e => { (e.target as HTMLImageElement).style.opacity = "0"; }}
-              />
-            </div>
-            {/* 이름 태그 */}
-            <div style={{
-              position: "absolute", bottom: -20, left: "50%", transform: "translateX(-50%)",
-              background: "rgba(0,0,0,0.6)", color: "white",
-              fontSize: "clamp(9px,0.9vw,12px)", fontWeight: 700,
-              padding: "1px 6px", borderRadius: 6, whiteSpace: "nowrap",
-            }}>{name}</div>
-          </div>
+          <WalkingChar
+            x={charPos.x} y={charPos.y}
+            flip={charFlip} isWalking={isWalkAnim}
+            charId={characterId} label={name} isMe
+          />
         )}
+
+        {/* 다른 학생들 캐릭터 오버레이 */}
+        {serverSession && Object.entries(serverSession.currentPositions ?? {}).map(([sName, pos]) => {
+          if (sName === name || pos === null) return null;
+          const btn = pillRefs.current[pos];
+          if (!btn) return null;
+          const rect = btn.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height * 0.25;
+          const charId = serverSession.characterIds?.[sName] ?? 1;
+          return (
+            <WalkingChar
+              key={sName}
+              x={cx} y={cy}
+              flip={false} isWalking={false}
+              charId={charId} label={sName} isMe={false}
+            />
+          );
+        })}
 
         {/* 피드백 배너 + 다음 버튼 */}
         {showFeedback && (
