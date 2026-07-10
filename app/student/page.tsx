@@ -49,6 +49,13 @@ export default function StudentPage() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const positionDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // 캐릭터 걷기 오버레이
+  const pillRefs = useRef<(HTMLButtonElement | null)[]>([null, null, null, null]);
+  const [charPos, setCharPos] = useState<{ x: number; y: number } | null>(null);
+  const [charFlip, setCharFlip] = useState(false);
+  const [isWalkAnim, setIsWalkAnim] = useState(false);
+  const charAnimRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   // 서버 폴링: phase, students 업데이트
   const fetchSession = useCallback(async () => {
     if (!code) return;
