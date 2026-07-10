@@ -16,6 +16,58 @@ type ServerSession = {
 };
 type Step = "profile" | "join" | "lobby" | "quiz" | "done" | "finished";
 
+// 걷는 캐릭터 오버레이 공통 컴포넌트
+function WalkingChar({ x, y, flip, isWalking, charId, label, isMe }: {
+  x: number; y: number; flip: boolean; isWalking: boolean;
+  charId: number; label: string; isMe: boolean;
+}) {
+  const size = isMe ? "clamp(44px,4.5vw,64px)" : "clamp(36px,3.6vw,52px)";
+  return (
+    <div style={{
+      position: "fixed",
+      left: x, top: y,
+      transform: "translate(-50%, -100%)",
+      zIndex: isMe ? 100 : 95,
+      pointerEvents: "none",
+      transition: "left 1.1s cubic-bezier(.4,0,.2,1), top 1.1s cubic-bezier(.4,0,.2,1)",
+    }}>
+      {/* 그림자 */}
+      <div style={{
+        position: "absolute", bottom: -4, left: "50%", transform: "translateX(-50%)",
+        width: isWalking ? 32 : 22, height: 7,
+        borderRadius: "50%",
+        background: isMe ? "rgba(0,0,0,0.22)" : "rgba(0,0,0,0.12)",
+        transition: "width 0.2s",
+      }} />
+      {/* 이미지 */}
+      <div style={{
+        transform: flip ? "scaleX(-1)" : "scaleX(1)",
+        animation: isWalking
+          ? "walk-bob 0.22s ease-in-out infinite"
+          : "idle-float 2.2s ease-in-out infinite",
+        width: size, height: size,
+        opacity: isMe ? 1 : 0.85,
+      }}>
+        <img
+          src={`/characters/char_${charId}.png`}
+          alt={label}
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+          onError={e => { (e.target as HTMLImageElement).style.opacity = "0"; }}
+        />
+      </div>
+      {/* 이름 태그 */}
+      <div style={{
+        position: "absolute", bottom: -20, left: "50%", transform: "translateX(-50%)",
+        background: isMe ? "rgba(30,30,80,0.75)" : "rgba(0,0,0,0.55)",
+        color: isMe ? "#fde68a" : "white",
+        fontSize: "clamp(9px,0.85vw,12px)", fontWeight: 700,
+        padding: "1px 6px", borderRadius: 6, whiteSpace: "nowrap",
+        border: isMe ? "1px solid rgba(253,230,138,0.4)" : "none",
+      }}>{label}</div>
+    </div>
+  );
+}
+
 const OPTION_CONFIG = [
   { color: "#e8a838", border: "#c8881a" },
   { color: "#5ba4c8", border: "#3a84a8" },
