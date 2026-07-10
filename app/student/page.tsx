@@ -29,7 +29,7 @@ function WalkingChar({ x, y, flip, isWalking, charId, label, isMe }: {
       transform: "translate(-50%, -100%)",
       zIndex: isMe ? 100 : 95,
       pointerEvents: "none",
-      transition: "left 1.1s cubic-bezier(.4,0,.2,1), top 1.1s cubic-bezier(.4,0,.2,1)",
+      transition: "left 0.55s cubic-bezier(.4,0,.2,1), top 0.55s cubic-bezier(.4,0,.2,1)",
     }}>
       {/* 그림자 */}
       <div style={{
