@@ -1,10 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
 
 export type Quiz = {
   id: string;
@@ -29,21 +23,10 @@ type SessionState = {
   phase: "waiting" | "quiz" | "result" | "finished";
 };
 
-async function getSession(code: string): Promise<SessionState | null> {
-  const { data, error } = await supabase
-    .from("sessions")
-    .select("data")
-    .eq("code", code)
-    .single();
-  if (error || !data) return null;
-  return data.data as SessionState;
-}
-
-async function saveSession(code: string, session: SessionState) {
-  await supabase
-    .from("sessions")
-    .upsert({ code, data: session, updated_at: new Date().toISOString() });
-}
+// 글로벌 인메모리 세션 저장소
+const globalStore = global as typeof globalThis & { sessions?: Map<string, SessionState> };
+if (!globalStore.sessions) globalStore.sessions = new Map();
+const sessions = globalStore.sessions;
 
 function generateCode(): string {
   return String(Math.floor(10000 + Math.random() * 90000));
@@ -56,21 +39,10 @@ export async function GET(req: NextRequest) {
 
   if (!code) return NextResponse.json({ error: "code required" }, { status: 400 });
 
-  const session = await getSession(code);
+  const session = sessions.get(code);
   if (!session) return NextResponse.json({ error: "session not found" }, { status: 404 });
 
   if (role === "student") {
-    const quizAnswers: Record<string, Record<string, number>> = {};
-    const characterIds: Record<string, number> = {};
-    const currentPositions: Record<string, number | null> = {};
-    for (const [name, st] of Object.entries(session.students)) {
-      characterIds[name] = st.characterId;
-      currentPositions[name] = st.currentPosition ?? null;
-      for (const [qid, chosen] of Object.entries(st.answers)) {
-        if (!quizAnswers[qid]) quizAnswers[qid] = {};
-        quizAnswers[qid][name] = chosen;
-      }
-    }
     return NextResponse.json({
       phase: session.phase,
       totalQuizzes: session.quizzes.length,
@@ -79,9 +51,6 @@ export async function GET(req: NextRequest) {
         name,
         score: session.students[name].score,
       })),
-      characterIds,
-      quizAnswers,
-      currentPositions,
     });
   }
 
@@ -101,12 +70,12 @@ export async function POST(req: NextRequest) {
       students: {},
       phase: "waiting",
     };
-    await saveSession(code, newSession);
+    sessions.set(code, newSession);
     return NextResponse.json({ code });
   }
 
   const { code } = body;
-  const session = await getSession(code);
+  const session = sessions.get(code);
   if (!session) return NextResponse.json({ error: "session not found" }, { status: 404 });
 
   if (action === "join") {
@@ -114,29 +83,17 @@ export async function POST(req: NextRequest) {
     if (!session.students[name]) {
       session.students[name] = { name, score: 0, characterId: characterId ?? 1, answers: {}, currentPosition: null };
     }
-    await saveSession(code, session);
     return NextResponse.json({ ok: true });
   }
 
   if (action === "start") {
     session.currentQuizIndex = 0;
     session.phase = "quiz";
-    await saveSession(code, session);
-    return NextResponse.json({ ok: true });
-  }
-
-  if (action === "next") {
-    session.currentQuizIndex += 1;
-    if (session.currentQuizIndex >= session.quizzes.length) {
-      session.phase = "finished";
-    }
-    await saveSession(code, session);
     return NextResponse.json({ ok: true });
   }
 
   if (action === "showResult") {
     session.phase = "result";
-    await saveSession(code, session);
     return NextResponse.json({
       ok: true,
       answer: session.quizzes[session.currentQuizIndex]?.answer,
@@ -150,15 +107,6 @@ export async function POST(req: NextRequest) {
     } else {
       session.phase = "quiz";
     }
-    await saveSession(code, session);
-    return NextResponse.json({ ok: true });
-  }
-
-  if (action === "position") {
-    const { name, position } = body;
-    const student = session.students[name];
-    if (student) student.currentPosition = position ?? null;
-    await saveSession(code, session);
     return NextResponse.json({ ok: true });
   }
 
@@ -170,12 +118,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, alreadyAnswered: true });
     }
     student.answers[quizId] = chosen;
-    student.currentPosition = null;
     const quiz = session.quizzes.find(q => q.id === quizId);
     const correct = quiz ? quiz.answer === chosen : false;
     if (correct) student.score += 1;
-    await saveSession(code, session);
     return NextResponse.json({ ok: true, correct, correctAnswer: quiz?.answer ?? -1 });
+  }
+
+  if (action === "position") {
+    const { name, position } = body;
+    const student = session.students[name];
+    if (student) student.currentPosition = position ?? null;
+    return NextResponse.json({ ok: true });
   }
 
   return NextResponse.json({ error: "unknown action" }, { status: 400 });
