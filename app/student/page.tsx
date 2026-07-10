@@ -600,6 +600,7 @@ export default function StudentPage() {
             return (
               <button
                 key={i}
+                ref={el => { pillRefs.current[i] = el; }}
                 onClick={() => { if (chosen === null) confirmChoice(i); }}
                 onMouseEnter={() => { if (chosen === null) { setHoverIdx(i); setCursor(null); sendPosition(i); } }}
                 onMouseLeave={() => { if (chosen === null) { setHoverIdx(null); sendPosition(null); } }}
