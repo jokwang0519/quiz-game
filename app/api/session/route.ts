@@ -43,6 +43,12 @@ export async function GET(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "session not found" }, { status: 404 });
 
   if (role === "student") {
+    const characterIds: Record<string, number> = {};
+    const currentPositions: Record<string, number | null> = {};
+    for (const [name, st] of Object.entries(session.students)) {
+      characterIds[name] = st.characterId;
+      currentPositions[name] = st.currentPosition ?? null;
+    }
     return NextResponse.json({
       phase: session.phase,
       totalQuizzes: session.quizzes.length,
@@ -51,6 +57,8 @@ export async function GET(req: NextRequest) {
         name,
         score: session.students[name].score,
       })),
+      characterIds,
+      currentPositions,
     });
   }
 
