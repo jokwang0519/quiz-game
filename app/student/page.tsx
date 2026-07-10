@@ -171,6 +171,29 @@ export default function StudentPage() {
     sendPosition(pos);
   }, [hoverIdx, cursor, step, chosen]);
 
+  // 캐릭터 걷기: 활성 보기 버튼 중앙으로 이동
+  useEffect(() => {
+    if (step !== "quiz" || chosen !== null) return;
+    const activeIdx = hoverIdx !== null ? hoverIdx : cursor;
+    if (activeIdx === null) { setCharPos(null); return; }
+
+    const btn = pillRefs.current[activeIdx];
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const targetX = rect.left + rect.width / 2;
+    const targetY = rect.top + rect.height * 0.25; // 버튼 상단 위에 표시
+
+    setCharPos(prev => {
+      if (prev) {
+        setCharFlip(targetX < prev.x); // 이동 방향에 따라 좌우 반전
+      }
+      return { x: targetX, y: targetY };
+    });
+    setIsWalkAnim(true);
+    if (charAnimRef.current) clearTimeout(charAnimRef.current);
+    charAnimRef.current = setTimeout(() => setIsWalkAnim(false), 500);
+  }, [hoverIdx, cursor, chosen, step]);
+
   // 2x2 그리드 방향키 이동
   // 배치: 0(좌상) 1(우상) / 2(좌하) 3(우하)
   const moveGrid = (cur: number | null, key: string): number => {
