@@ -45,20 +45,26 @@ export async function GET(req: NextRequest) {
   if (role === "student") {
     const characterIds: Record<string, number> = {};
     const currentPositions: Record<string, number | null> = {};
-    for (const [name, st] of Object.entries(session.students)) {
-      characterIds[name] = st.characterId;
-      currentPositions[name] = st.currentPosition ?? null;
+    const quizAnswers: Record<string, Record<string, number>> = {};
+    for (const [sName, st] of Object.entries(session.students)) {
+      characterIds[sName] = st.characterId;
+      currentPositions[sName] = st.currentPosition ?? null;
+      for (const [qid, chosen] of Object.entries(st.answers)) {
+        if (!quizAnswers[qid]) quizAnswers[qid] = {};
+        quizAnswers[qid][sName] = chosen;
+      }
     }
     return NextResponse.json({
       phase: session.phase,
       totalQuizzes: session.quizzes.length,
       allQuizzes: session.quizzes.map(q => ({ id: q.id, question: q.question, options: q.options })),
-      students: Object.keys(session.students).map(name => ({
-        name,
-        score: session.students[name].score,
+      students: Object.keys(session.students).map(sName => ({
+        name: sName,
+        score: session.students[sName].score,
       })),
       characterIds,
       currentPositions,
+      quizAnswers,
     });
   }
 
