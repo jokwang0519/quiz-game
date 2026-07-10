@@ -571,8 +571,8 @@ export default function StudentPage() {
               <button
                 key={i}
                 onClick={() => { if (chosen === null) confirmChoice(i); }}
-                onMouseEnter={() => { if (chosen === null) { setHoverIdx(i); setCursor(null); } }}
-                onMouseLeave={() => { if (chosen === null) setHoverIdx(null); }}
+                onMouseEnter={() => { if (chosen === null) { setHoverIdx(i); setCursor(null); sendPosition(i); } }}
+                onMouseLeave={() => { if (chosen === null) { setHoverIdx(null); sendPosition(null); } }}
                 className={`${isChosen ? "wiggle" : isActive ? "pill-selecting" : ""} ${slideClass}`}
                 style={{
                   width: "100%", height: "100%",
